@@ -84,6 +84,7 @@ export convert = ->
 
   var prev-indent
   start = true
+  prelude = []
 
   for line of (it + "\n") / '\n'
     if line.trim!0 is '-' or src[*-1]?[*-1] is ','
