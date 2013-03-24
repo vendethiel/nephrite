@@ -1,7 +1,8 @@
 {
-	"name": "cojade-to-jade",
-	"version": "1.2.0",
+	"name": "nephrite",
+	"version": "1.0.0",
 	"author": "Nami-Doc",
+	"main": "index.js",
 	"scripts": {
 		"prepublish": "make",
 		"publish": "make clean"

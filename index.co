@@ -45,7 +45,7 @@ interp = (line, extra) ->
       line .= replace \#{ '%{"__INTER__'
       line .= replace \} '__OUTER__"}'
     
-    # `== abc` is jade, `= abc` is coco
+    # `== abc` is jade, `= abc` is code
     trimmed.0 is '=' and trimmed.1 is not '='
       line = line.replace('=' '| #{(') + ') or ""}'
 
@@ -66,7 +66,7 @@ export convert = ->
   src = []
 
   # tags to parse
-  tags = <[if unless join while for]>
+  tags = <[if unless while for]>
 
   # tags that must take on another
   chained-tags = <[else]>
@@ -158,7 +158,7 @@ export wrap = (src, prelude) ->
     #{prelude * '\n'}
     join = -> if it then it.join '' else ''
     module.exports = (locals, extra) ->
-      \"""
-       #src
-      \"""
+      \"\"\"
+        #src
+      \"\"\"
   """
