@@ -1,7 +1,6 @@
-install:
-	@echo Building .js files ...
+install: index.co
+	@echo Building .js file ...
 	@coco -cb .
-	@lsc -cb .
 
 clean:
 	@rm -rf *.js

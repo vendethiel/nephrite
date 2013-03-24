@@ -1,11 +1,11 @@
 {
 	"name": "nephrite",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"author": "Nami-Doc",
 	"main": "index.js",
 	"scripts": {
 		"prepublish": "make",
-		"publish": "make clean"
+		"postpublish": "make clean"
 	},
 	"dependencies": {
 		"jade": "0.28.2"

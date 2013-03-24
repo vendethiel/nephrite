@@ -1,4 +1,3 @@
-entab = -> "  " * it
 blame = -> console.log it; process.exit!
 jade = require \jade
 
@@ -31,35 +30,6 @@ export compile = (src, filename) ->
 
   wrap fn.replace(/\{\{/g \#{), prelude
 
-# prepares interpolations
-interp = (line, extra) ->
-  line .= slice extra * 2
-  trimmed = line.trim!
-
-  if
-    trimmed.0 is '-'
-      ; # jade interpolation
-    
-    trimmed.slice(0 2) is \#{
-      # tag interpolation => #{tag} becomes should be #{"tag"}
-      line .= replace \#{ '%{"__INTER__'
-      line .= replace \} '__OUTER__"}'
-    
-    # `== abc` is jade, `= abc` is code
-    trimmed.0 is '=' and trimmed.1 is not '='
-      line = line.replace('=' '| #{(') + ') or ""}'
-
-    ~line.indexOf '== '
-      line .= replace '== ' '= '
-
-    ~line.indexOf '= '
-      # BAAH this is bad, it's gonna do bad things such as
-      # a(foo= "bar")
-      # but well...
-      line = line.replace('= ' ' #{(') + ') or ""}'
-
-  line
-
 
 export convert = ->
   it -= /\r/g # fuck
@@ -83,9 +53,44 @@ export convert = ->
   real-indents = []
 
   var prev-indent
+  ind-len = 0
+  base-ind = ""
+
   start = true
   prelude = []
 
+  # prepares interpolations
+  interp = (line, extra) ->
+    line .= slice extra * ind-len
+    trimmed = line.trim!
+
+    if
+      trimmed.0 is '-'
+        ; # jade interpolation
+      
+      trimmed.slice(0 2) is \#{
+        # tag interpolation => #{tag} becomes should be #{"tag"}
+        line .= replace \#{ '%{"__INTER__'
+        line .= replace \} '__OUTER__"}'
+      
+      # `== abc` is jade, `= abc` is code
+      trimmed.0 is '=' and trimmed.1 is not '='
+        line = line.replace('=' '| #{(') + ') or ""}'
+
+      ~line.indexOf '== '
+        line .= replace '== ' '= '
+
+      ~line.indexOf '= '
+        # BAAH this is bad, it's gonna do bad things such as
+        # a(foo= "bar")
+        # but well...
+        line = line.replace('= ' ' #{(') + ') or ""}'
+
+    line
+
+  entab = -> base-ind * it
+
+  # let's process it ...
   for line of (it + "\n") / '\n'
     if line.trim!0 is '-' or src[*-1]?[*-1] is ','
       # attributes continuation
@@ -95,8 +100,11 @@ export convert = ->
 
     extra-level = indent-levels.length
 
-    indent = if line.match /^ +/
-      that.0.length / 2 # 2 spaces indent
+    indent = if line.match /^[\s\t]+/
+      base-ind = that.0 unless base-ind
+      ind-len = that.0.length unless ind-len
+
+      that.0.length / ind-len # 2 spaces indent
     else 0
 
     [tag] = line.trim!split ' '
