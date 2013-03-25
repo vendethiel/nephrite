@@ -35,7 +35,7 @@ Tho, it's used in [html5chan](http://github.com/qqueue/html5chan) and [wowboardh
 Compile it and use it later.
 Attributes are passed as `locals`, aliased to `@`. You can pass an extra attributes object as `@@`
 
-```js
+```coffee
 # compile it
 nephrite = require 'nephrite'
 src = nephrite.compile 'a(b="#{@c}")', 'index.jade'
@@ -47,22 +47,25 @@ fn obj, extra
 ## Syntax
 
 The syntax is the same as Jade, with a few gotchas :
-  - Don't prefix your tags with `-`. `-` is jade interpolation, to allow for even better perfs on static content :
+  - Don't prefix your tags with `-`, it's jade interpolation, to allow for even better perfs on static content :
+
 ```jade
 ul#pages
  - for (var i = 0; i <= 10; ++i)
-   li(page=i)== i
+    li: a(page=i)== i
 ```
 
-  - The jade output is `==`. This will be optimized (compiled by jade)
+  for tags, see just below.
+
+  - The jade output is `==` (as seen just before). This is executed compile-time (by jade).
 
   - Tags are automatically recognized.
     Currently supported tags are : `if`, `unless`, `while`, `for`, `else`.
     Loops are automatically joined.
 
   - To avoid complexity in the converter, for attribute interpolation you have to explicitely interpolate them :
-  `a(href=foo) Foo!` will use jade
-  `a(href="#{foo}") Foo!` will use 
+  `a(href=foo) Foo!` will use jade (compile time),
+  `a(href="#{@foo}") Foo!` will use your `locals.foo` (runtime).
 
   - The "silent code interpolation" is `~`
     (take note that any code interpolation appearing BEFORE content will be moved out of the closure for better perfs.)
