@@ -158,7 +158,6 @@ export convert = ->
     prev-indent := indent - extra-level
 
   src *= \\n
-  blame src
 
   [prelude, src]
 

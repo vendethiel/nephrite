@@ -1,6 +1,6 @@
 {
 	"name": "nephrite",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"author": "Nami-Doc",
 	"main": "index.js",
 	"scripts": {
