@@ -1,40 +1,7 @@
 blame = -> console.log it; process.exit!
 jade = require \jade
 
-export compile = (src, filename) ->
-  src .= replace /@@/g \extra.
-  src .= replace /@/g \locals.
-
-  [prelude, src] = convert src
-  src .= replace /#{/g \{{
-
-  # sometimes we need jade interp
-  # let's use %{} for that (only for the parser)
-  src .= replace /%{/g \#{
-
-  try
-    fn = jade.compile src, {+pretty}
-  catch
-    say src
-    blame "Jade Error compiling #filename : #e"
-
-  fn = fn!
-  
-  # used for tag interpolation (`#{tag} text`)
-  # WARNING : can not use ''
-  fn .= replace /__INTER__/g \#{
-  fn .= replace /__OUTER__/g \}
-
-  # clean a bit. Sadly no way to disable escaping
-  fn .= replace /&quot;/g \"
-
-  wrap fn.replace(/\{\{/g \#{), prelude
-
-
-export convert = ->
-  it -= /\r/g # fuck
-  src = []
-
+module.exports = class Compiler
   # tags to parse
   tags = <[if unless while for]>
 
@@ -43,25 +10,21 @@ export convert = ->
 
   # tags that must be joined
   joinable-tags = <[while for]>
-  
-  # keep tracks on indent needed for tags
-  # so that we can 
-  indent-levels = []
 
-  # keep tracks of real indent to insert
-  # (same as indent-levels minus extra-level)
-  real-indents = []
+  (@src, @filename) ~>
+    @ind-len = 0
+    @base-ind = ""
+    
+    @prelude = []
+    jade.filters.prelude = ~>
+      @prelude.push it
+      "" # don't show anything, jade !
 
-  var prev-indent
-  ind-len = 0
-  base-ind = ""
-
-  start = true
-  prelude = []
+    return @compile!
 
   # prepares interpolations
-  interp = (line, extra) ->
-    line .= slice extra * ind-len
+  interp: (line, extra) ->
+    line .= slice extra * @ind-len
     trimmed = line.trim!
 
     if
@@ -88,85 +51,132 @@ export convert = ->
 
     line
 
-  entab = -> "#base-ind" * it
+  entab: -> "#{@base-ind}" * it
 
-  # let's process it ...
-  for line of (it + "\n") / '\n'
-    if line.trim!0 is '-' or src[*-1]?[*-1] is ','
-      # attributes continuation
-      src.push interp line, extra-level
-      continue
+  compile: ->
+    {src, filename} = @
+    src .= replace /@@/g \extra.
+    src .= replace /@/g \locals.
 
+    src = @convert src
+    src .= replace /#{/g \{{
 
-    extra-level = indent-levels.length
+    # sometimes we need jade interp
+    # let's use %{} for that (only for the parser)
+    src .= replace /%{/g \#{
 
-    indent = if line.match /^[\s\t]+/
-      base-ind = that.0 unless base-ind
-      ind-len = that.0.length unless ind-len
+    try
+      fn = jade.compile src, {+pretty}
+    catch
+      say src
+      blame "Jade Error compiling #filename : #e"
 
-      that.0.length / ind-len # 2 spaces indent
-    else 0
-
-    [tag] = line.trim!split ' '
-
-    # auto-close
-    while indent <= indent-levels[*-1]
-      indent-levels.pop!
-      #        INDENT            close the """ and nullcheck
-      src.push entab(real-indents.pop!) + '| """) or ""}'
-      --extra-level # decrease debt
-
-    tabs = entab indent - extra-level
+    fn = fn!
     
-    if start
-      start = false unless tag is '~'
+    # used for tag interpolation (`#{tag} text`)
+    # WARNING : can not use ''
+    fn .= replace /__INTER__/g \#{
+    fn .= replace /__OUTER__/g \}
 
-    if
-      tag is '~'
-        code = line.trim!slice 1
-        if start
-          prelude.push code
-          continue
+    # clean a bit. Sadly no way to disable escaping
+    fn .= replace /&quot;/g \"
+
+    @wrap fn.replace /\{\{/g \#{
+
+
+  convert: ->
+    it -= /\r/g # fuck
+    src = []
+    
+    # keep tracks on indent needed for tags
+    # so that we can 
+    indent-levels = []
+
+    # keep tracks of real indent to insert
+    # (same as indent-levels minus extra-level)
+    real-indents = []
+
+    var prev-indent
+
+    start = true
+
+    # let's process it ...
+    for line of (it + "\n") / '\n'
+      if line.trim!0 is '-' or src[*-1]?[*-1] is ','
+        # attributes continuation
+        src.push @interp line, extra-level
+        continue
+
+
+      extra-level = indent-levels.length
+
+      indent = if line.match /^[\s\t]+/
+        @base-ind = that.0 unless @base-ind
+        @ind-len = that.0.length unless @ind-len
+
+        that.0.length / @ind-len # 2 spaces indent
+      else 0
+
+      [tag] = line.trim!split ' '
+
+      # auto-close
+      while indent <= indent-levels[*-1]
+        indent-levels.pop!
+        #        INDENT            close the """ and nullcheck
+        src.push @entab(real-indents.pop!) + '| """) or ""}'
+        --extra-level # decrease debt
+
+      tabs = @entab indent - extra-level
+      
+      if start
+        start = false unless tag is '~'
+
+      if
+        tag is '~'
+          code = line.trim!slice 1
+          if start
+            @prelude.push code
+            continue
+          else
+            line = tabs + "| \#{((#code); '')}"
+        tag of tags
+          # insert the tag
+          code = line.trim!
+
+          filter = if tag of joinable-tags
+            \join
+          else ''
+
+          line = tabs + '| #{' + filter + '(' + code + ' then """'
+
+          # we're expecting an outdent
+          indent-levels.push indent
+          real-indents.push indent - extra-level
+        tag of chained-tags
+          # answer to another tag
+
+          src.pop! # remove closing + nullcheck
+          line = tabs + '| """ ' + line.trim! + ' then """'
+
+          # we're expecting an outdent
+          indent-levels.push indent
+          real-indents.push indent - extra-level
         else
-          line = tabs + "| \#{((#code); '')}"
-      tag of tags
-        # insert the tag
-        code = line.trim!
+          line = @interp line, extra-level
 
-        filter = if tag of joinable-tags
-          \join
-        else ''
+      src.push line
+      prev-indent := indent - extra-level
 
-        line = tabs + '| #{' + filter + '(' + code + ' then """'
+    src *= \\n
 
-        # we're expecting an outdent
-        indent-levels.push indent
-        real-indents.push indent - extra-level
-      tag of chained-tags
-        # answer to another tag
-
-        src.pop! # remove closing + nullcheck
-        line = tabs + '| """ ' + line.trim! + ' then """'
-
-        # we're expecting an outdent
-        indent-levels.push indent
-        real-indents.push indent - extra-level
-      else
-        line = interp line, extra-level
-
-    src.push line
-    prev-indent := indent - extra-level
-
-  src *= \\n
-
-  [prelude, src]
-
-export wrap = (src, prelude) ->
-  """
-    #{prelude * '\n'}
-    join = -> if it then it.join '' else ''
-    module.exports = (locals, extra) ->
-      \"\"\"
-        #src
-      \"\"\"
-  """
+    src
+  
+  wrap: (src) ->
+    """
+      #{@prelude * '\n'}
+      join = -> if it then it.join '' else ''
+      module.exports = (locals, extra) ->
+        \"\"\"
+          #src
+        \"\"\"
+    """

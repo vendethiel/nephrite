@@ -38,8 +38,10 @@ Attributes are passed as `locals`, aliased to `@`. You can pass an extra attribu
 ```coffee
 # compile it
 nephrite = require 'nephrite'
-src = nephrite.compile 'a(b="#{@c}")', 'index.jade'
+
+src = nephrite 'a(b="#{@c}")', 'index.jade'
 js = Coco.compile src, {bare: true, filename}
+
 # use it
 fn obj, extra
 ```
@@ -78,3 +80,15 @@ ul#pages
   ~ /*this will not*/
   ~ "this won't be outputted anyway"
 ```
+
+  - For bigger block, use `:prelude` filter
+```coffee
+:prelude
+  gen-classes = ->
+    classes = "post "
+    classes += "abc " if it.abc
+    classes
+
+blah
+```
+  Remember, of course, that you should avoid having too much logic in your templates
