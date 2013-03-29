@@ -66,10 +66,12 @@ ul#pages
     Loops are automatically joined.
 
   - To avoid complexity in the converter, for attribute interpolation you have to explicitely interpolate them :
-  `a(href=foo) Foo!` will use jade (compile time),
+  `a(href=foo) Foo!` will use jade's `foo` local (compile time),
   `a(href="#{@foo}") Foo!` will use your `locals.foo` (runtime).
 
-  - The "silent code interpolation" is `~`
+  - Filter content is not modified in any way.
+
+  - The "silent code interpolation" (prelude) is `~`.
     (take note that any code interpolation appearing BEFORE content will be moved out of the closure for better perfs.)
     For example :
 
@@ -81,7 +83,7 @@ ul#pages
   ~ "this won't be outputted anyway"
 ```
 
-  - For bigger block, use `:prelude` filter
+  - For bigger blocks, use `:prelude` filter.
 ```coffee
 :prelude
   gen-classes = ->

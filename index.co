@@ -96,17 +96,15 @@ module.exports = class Compiler
     # (same as indent-levels minus extra-level)
     real-indents = []
 
-    var prev-indent
-
+    var prev-indent, filter-indent
     start = true
 
     # let's process it ...
     for line of (it + "\n") / '\n'
-      if line.trim!0 is '-' or src[*-1]?[*-1] is ','
+      if not filter-indent and (line.trim!0 is '-' or src[*-1]?[*-1] is ',')
         # attributes continuation
         src.push @interp line, extra-level
         continue
-
 
       extra-level = indent-levels.length
 
@@ -117,7 +115,17 @@ module.exports = class Compiler
         that.0.length / @ind-len # 2 spaces indent
       else 0
 
-      [tag] = line.trim!split ' '
+      # avoid escaping filters
+      if filter-indent
+        if indent < filter-indent
+          # GET. OUT.
+          filter-indent = 0
+        else # we're still in the filter
+          src.push line
+          continue
+
+      trimmed = line.trim!
+      [tag] = trimmed.split ' '
 
       # auto-close
       while indent <= indent-levels[*-1]
@@ -130,8 +138,11 @@ module.exports = class Compiler
       
       if start
         start = false unless tag is '~'
-
       if
+        trimmed.0 is ':'
+          # filter, stop escaping shit
+          # start in the next level
+          filter-indent = indent + 1
         tag is '~'
           code = line.trim!slice 1
           if start
