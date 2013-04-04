@@ -55,6 +55,7 @@ module.exports = class Compiler
 
   compile: ->
     {src, filename} = @
+
     src .= replace /@@/g \extra.
     src .= replace /@/g \locals.
 
@@ -66,7 +67,7 @@ module.exports = class Compiler
     src .= replace /%{/g \#{
 
     try
-      fn = jade.compile src, {+pretty}
+      fn = jade.compile src
     catch
       say src
       blame "Jade Error compiling #filename : #e"

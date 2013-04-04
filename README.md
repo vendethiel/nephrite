@@ -1,7 +1,7 @@
 Nephrite
 ==============
 
-Pre-compiles jade to Coffee/Coco/LiveScript, allowing you to have the syntax of jade with the best perfs (only interpolation is used). It also avoids you the pain of undefined and null by auto-soaking.
+Pre-compiles [Jade](https://github.com/visionmedia/jade) to Coffee/Coco/LiveScript, allowing you to have the syntax of Jade with the best perfs (only interpolation is used). It also avoids you the pain of undefined and null by auto-soaking.
 
 To make you understand this a bit better, let's say that your code :
 
@@ -71,8 +71,8 @@ ul#pages
 
   - Filter content is not modified in any way.
 
-  - The "silent code interpolation" (prelude) is `~`.
-    (take note that any code interpolation appearing BEFORE content will be moved out of the closure for better perfs.)
+  - The "silent code interpolation" (and prelude) is `~`.
+    (take note that any code interpolation appearing BEFORE content will be moved in the prelude, out of the closure, for better perfs.)
     For example :
 
 ```jade
@@ -84,6 +84,7 @@ ul#pages
 ```
 
   - For bigger blocks, use `:prelude` filter.
+
 ```coffee
 :prelude
   gen-classes = ->
@@ -91,6 +92,6 @@ ul#pages
     classes += "abc " if it.abc
     classes
 
-blah
+blah= gen-classes {}
 ```
   Remember, of course, that you should avoid having too much logic in your templates
