@@ -16,7 +16,9 @@ cases = fs.readdirSync 'test/jade'
 
 for cases
 	path = "test/jade/#&.jade"
-	html-path = path.replace /jade/g 'html'
+	html-path = path
+		.replace '/jade/' '/html/'
+		.replace '.jade' '.html'
 	
 	unless fs.existsSync path
 		err "cannot find #path"
@@ -37,7 +39,13 @@ for cases
 	#src
 	return module.exports();
 	"""
-	result = fn!trim!
+	try
+		result = fn!trim!
+	catch
+		console.log """
+Error : #e
+#src
+"""
 
 	if result is html
 		console.log "OK: #&."
