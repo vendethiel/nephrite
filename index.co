@@ -1,4 +1,3 @@
-blame = -> console.log it; process.exit!
 jade = require \jade
 
 module.exports = class Compiler
@@ -70,7 +69,7 @@ module.exports = class Compiler
       fn = jade.compile src, @jade-opts
     catch
       say src
-      blame "Jade Error compiling #filename : #e"
+      throw new Error "Jade Error compiling #filename : #e"
 
     fn = fn!
     
