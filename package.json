@@ -8,6 +8,7 @@
 		"postpublish": "make clean"
 	},
 	"dependencies": {
-		"jade": "0.28.2"
+		"jade": "0.28.2",
+		"coco": "0.9.1"
 	}
 }

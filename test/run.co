@@ -1,0 +1,51 @@
+nephrite = require '../'
+coco = require 'coco'
+fs = require 'fs'
+
+function err
+	for @@ => console.log &
+	process.exit 1
+function read
+	fs.readFileSync it, 'utf8' .trim! - /\r/g
+
+
+console.log 'Booting test suit'
+
+cases = fs.readdirSync 'test/jade'
+	.map -> it - '.jade'
+
+for cases
+	path = "test/jade/#&.jade"
+	html-path = path.replace /jade/g 'html'
+	
+	unless fs.existsSync path
+		err "cannot find #path"
+	unless fs.existsSync html-path
+		err "cannot find #html-path"
+
+	src = read path .trim!
+	html = read html-path
+
+	try
+		src = nephrite src, path, {+pretty}
+		src = coco.compile src, {+bare}
+	catch
+		err "Error compiling #path : #e"
+
+	fn = Function """
+	module = {};
+	#src
+	return module.exports();
+	"""
+	result = fn!trim!
+
+	if result is html
+		console.log "OK: #&."
+	else
+		err """
+**FAIL** : #&.
+Got      : #result
+Expected : #html
+"""
+
+console.log 'Tests finished'

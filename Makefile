@@ -5,4 +5,7 @@ install: index.co
 clean:
 	@rm -rf *.js
 
-.PHONY: clean
+test: index.co
+	@coco test/run 
+
+.PHONY: clean test
