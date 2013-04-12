@@ -1,6 +1,6 @@
 install: index.co
 	@echo Building .js file ...
-	@coco -cb .
+	@coco -cb index.co
 
 clean:
 	@rm -rf *.js

@@ -54,12 +54,12 @@ The syntax is the same as Jade, with a few gotchas :
 ```jade
 ul#pages
  - for (var i = 0; i <= 10; ++i)
-    li: a(page=i)== i
+    li: a(data-page=i, href="/page/%{i}")== i
 ```
 
   for tags, see just below.
 
-  - The jade output is `==` (as seen just before). This is executed compile-time (by jade).
+  - The jade content is `==` (as seen just before). This is executed compile-time (by jade).
 
   - Jade interpolation is `%{}`
 

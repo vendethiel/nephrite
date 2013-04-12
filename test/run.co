@@ -19,11 +19,26 @@ for cases
 	html-path = path
 		.replace '/jade/' '/html/'
 		.replace '.jade' '.html'
+	json-path = path
+		.replace '/jade/' '/json/'
+		.replace '.jade' '.json'
+	extra-path = json-path.replace '.' '.extra.'
 	
 	unless fs.existsSync path
 		err "cannot find #path"
 	unless fs.existsSync html-path
 		err "cannot find #html-path"
+
+	args = if fs.existsSync json-path
+		try
+			JSON.parse read json-path
+		catch throw new Error "Cannot parse #json-path"
+	else {}
+	extra = if fs.existsSync extra-path
+		try
+			JSON.parse read extra-path
+		catch throw new Error "Cannot parse #extra-path"
+	else {}
 
 	src = read path .trim!
 	html = read html-path
@@ -34,13 +49,13 @@ for cases
 	catch
 		err "Error compiling #path : #e"
 
-	fn = Function """
+	fn = Function "locals" "extra" """
 	module = {};
 	#src
-	return module.exports();
+	return module.exports(locals, extra);
 	"""
 	try
-		result = fn!trim!
+		result = fn args, extra .trim!
 	catch
 		console.log """
 Error : #e

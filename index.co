@@ -158,7 +158,7 @@ module.exports = class Compiler
             @prelude.push code
             continue
           else
-            line = tabs + "| \#{((#code); '')}"
+            line = tabs + "| \#{(#code); ''}"
         tag of tags
           # insert the tag
           code = line.trim!
