@@ -16,7 +16,12 @@ module.exports = class Compiler
     
     @prelude = []
     jade.filters.prelude = ~>
+      # unescape shit /sigh
+      it .= replace /#{/g '%{'
+      it .= replace /{{/g '#{'
+
       @prelude.push it
+    
       "" # don't show anything, jade !
 
     return @compile!

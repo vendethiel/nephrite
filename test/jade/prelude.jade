@@ -3,4 +3,5 @@
 		"foo"
 	else
 		"| = \"bar\""
-= foo
+	foo = "#{foo} %{bar}"
+	throw new Error if foo is not "foo %{bar}"
