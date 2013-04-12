@@ -61,6 +61,8 @@ ul#pages
 
   - The jade output is `==` (as seen just before). This is executed compile-time (by jade).
 
+  - Jade interpolation is `%{}`
+
   - Tags are automatically recognized.
     Currently supported tags are : `if`, `unless`, `while`, `for`, `else`.
     Loops are automatically joined.

@@ -1,4 +1,3 @@
-blame = -> console.log it; process.exit!
 jade = require \jade
 
 module.exports = class Compiler
@@ -59,18 +58,22 @@ module.exports = class Compiler
     src .= replace /@@/g \extra.
     src .= replace /@/g \locals.
 
-    src = @convert src
-    src .= replace /#{/g \{{
+    try
+      src = @convert src
+    catch
+      say src
+      throw new Error "Nephrite error compiling #filename : #e"
 
+    # escape interp
+    src .= replace /#{/g \{{
     # sometimes we need jade interp
-    # let's use %{} for that (only for the parser)
     src .= replace /%{/g \#{
 
     try
       fn = jade.compile src, @jade-opts
     catch
       say src
-      blame "Jade Error compiling #filename : #e"
+      throw new Error "Jade Error compiling #filename : #e"
 
     fn = fn!
     

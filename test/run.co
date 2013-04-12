@@ -9,7 +9,7 @@ function read
 	fs.readFileSync it, 'utf8' .trim! - /\r/g
 
 
-console.log 'Booting test suit'
+console.log 'Booting test suite ...'
 
 cases = fs.readdirSync 'test/jade'
 	.map -> it - '.jade'
@@ -56,4 +56,4 @@ Got      : #result
 Expected : #html
 """
 
-console.log 'Tests finished'
+console.log 'Tests finished.'
