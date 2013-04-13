@@ -1,6 +1,7 @@
 nephrite = require '../'
 coco = require 'coco'
 fs = require 'fs'
+join = -> it.join ''
 
 function err
 	for @@ => console.log &
@@ -23,7 +24,7 @@ for cases
 		.replace '/jade/' '/json/'
 		.replace '.jade' '.json'
 	extra-path = json-path.replace '.' '.extra.'
-	
+
 	unless fs.existsSync path
 		err "cannot find #path"
 	unless fs.existsSync html-path
@@ -45,9 +46,18 @@ for cases
 
 	try
 		src = nephrite src, path, {+pretty}
+	catch
+		say src
+		err "Nephrite error compiling #path : #e"
+
+	try
 		src = coco.compile src, {+bare}
 	catch
-		err "Error compiling #path : #e"
+		errline = "#e"match /on line ([0-9]+)/ ?.1
+		console.log src
+		console.log "Error compiling #path : #e =>"
+		console.log src.split('\n')[errline-1] if errline?
+		err!
 
 	fn = Function "locals" "extra" """
 	module = {};

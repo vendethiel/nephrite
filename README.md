@@ -69,7 +69,7 @@ ul#pages
 
   - To avoid complexity in the converter, for attribute interpolation you have to explicitely interpolate them :
   `a(href=foo) Foo!` will use jade's `foo` local (compile time),
-  `a(href="#{@foo}") Foo!` will use your `locals.foo` (runtime).
+  `a(href="#{@foo}") Foo!` will use your `@foo` (`locals.foo`, runtime).
 
   - Filter content is not modified in any way.
 

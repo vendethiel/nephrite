@@ -2,6 +2,6 @@
 	foo = if true
 		"foo"
 	else
-		"| = \"bar\""
+		"| = 'bar'"
 	foo = "#{foo} %{bar}"
 	throw new Error if foo is not "foo %{bar}"
