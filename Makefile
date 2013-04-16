@@ -1,11 +1,15 @@
-install: index.co
+TS=coco
+
+install: index.js
 	@echo Building .js file ...
-	@coco -cb index.co
+
+index.js:
+	@$(TS) -cb index
+
+.PHONY: clean test
 
 clean:
 	@rm -rf *.js
 
-test:
-	@coco test/run 
-
-.PHONY: clean test
+test: clean index.js
+	@$(TS) test/run
