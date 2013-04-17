@@ -30,6 +30,11 @@ Jade itself can be slow due to several factors (`with`, `attrs`, `escape`) and t
 Tho, it's used in [html5chan](http://github.com/qqueue/html5chan) and [wowboardhelpers](http://github.com/Nami-Doc/wowboardhelpers).
 
 
+## Extension
+
+Files are valid jade files, minus the `@` part.
+Per se, Nephrite's default extension is `.ne`. `.jade` is valid too.
+
 ## Usage
 
 Compile it and use it later.
