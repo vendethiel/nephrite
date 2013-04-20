@@ -10,7 +10,7 @@ index.js:
 
 clean:
 	@echo Cleaning ...
-	@rm index.js
+	@rm -f index.js
 
 test: clean index.js
 	@$(TS) test/run
