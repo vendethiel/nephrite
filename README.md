@@ -1,3 +1,5 @@
+ [![Build Status](https://secure.travis-ci.org/Nami-Doc/nephrite.png)](http://travis-ci.org/Nami-Doc/nephrite)
+
 Nephrite
 ==============
 
@@ -32,8 +34,8 @@ Tho, it's used in [html5chan](http://github.com/qqueue/html5chan) and [wowboardh
 
 ## Extension
 
-Files are valid jade files, minus the `@` part.
-Per se, Nephrite's default extension is `.ne`. `.jade` is valid too.
+Files are valid jade files per se, minus the `@` part.
+Nephrite's default extension is `.ne` - `.jade` being valid too.
 
 ## Usage
 
@@ -64,7 +66,7 @@ ul#pages
 
   for tags, see just below.
 
-  - The jade content is `==` (as seen just before). This is executed compile-time (by jade).
+  - Jade output is `==` (as seen just before). This is executed compile-time (by jade).
 
   - Jade interpolation is `%{}`
 
@@ -73,7 +75,7 @@ ul#pages
     Loops are automatically joined.
 
   - To avoid complexity in the converter, for attribute interpolation you have to explicitely interpolate them :
-  `a(href=foo) Foo!` will use jade's `foo` local (compile time),
+  `a(href=foo) Foo!` will use jade's `foo` local (compile time) whereas
   `a(href="#{@foo}") Foo!` will use your `@foo` (`locals.foo`, runtime).
 
   - Filter content is not modified in any way.

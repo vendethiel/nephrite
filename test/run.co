@@ -8,6 +8,12 @@ function err
 	process.exit 1
 function read
 	fs.readFileSync it, 'utf8' .trim! - /\r/g
+function safe-jrp # json-read-parse
+	if fs.existsSync it
+		try
+			JSON.parse read it
+		catch throw new Error "Cannot parse #it"
+	else {}
 
 
 console.log 'Booting test suite ...'
@@ -30,16 +36,8 @@ for cases
 	unless fs.existsSync html-path
 		err "cannot find #html-path"
 
-	args = if fs.existsSync json-path
-		try
-			JSON.parse read json-path
-		catch throw new Error "Cannot parse #json-path"
-	else {}
-	extra = if fs.existsSync extra-path
-		try
-			JSON.parse read extra-path
-		catch throw new Error "Cannot parse #extra-path"
-	else {}
+	args = safe-jrp json-path
+	extra = safe-jrp extra-path
 
 	src = read path .trim!
 	html = read html-path
@@ -81,4 +79,4 @@ Got      : #result
 Expected : #html
 """
 
-console.log 'Tests finished.'
+console.log 'Tests passed!'

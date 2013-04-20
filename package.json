@@ -5,7 +5,8 @@
 	"main": "index.js",
 	"scripts": {
 		"prepublish": "make",
-		"postpublish": "make clean"
+		"postpublish": "make clean",
+		"test": "make test"
 	},
 	"dependencies": {
 		"jade": "0.28.2",
