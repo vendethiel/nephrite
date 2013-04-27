@@ -24,6 +24,9 @@ module.exports = class Compiler
     
       "" # don't show anything, jade !
 
+    if delete @jade-opts.safe
+      @safe = true
+
     return @compile!
 
   # prepares interpolations
@@ -60,9 +63,6 @@ module.exports = class Compiler
   compile: ->
     {src, filename} = @
 
-    src .= replace /@@/g \extra.
-    src .= replace /@/g \locals.
-
     try
       src = @convert src
     catch
@@ -89,6 +89,16 @@ module.exports = class Compiler
 
     # clean a bit. Sadly no way to disable escaping
     fn .= replace /&quot;/g \"
+
+
+    @prelude *= '\n'
+    # safe directive (... :( this is sad.)
+    unless @safe # if not given as an option
+      @safe = !!~@prelude.indexOf '"use safe"'
+    unless @safe
+      fn .= replace /@@/g \extra.
+      fn .= replace /@/g \locals.
+
 
     @wrap fn.replace /\{\{/g \#{
 
@@ -193,10 +203,12 @@ module.exports = class Compiler
   
   wrap: (src) ->
     """
-      #{@prelude * '\n'}
+      #{@prelude}
       join = -> if it then it.join '' else ''
       module.exports = (locals, extra) ->
+        #{if @safe then 'let this = locals then ' else ''}(
         \"\"\"
           #src
         \"\"\"
+        )
     """

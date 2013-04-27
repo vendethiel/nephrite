@@ -46,12 +46,17 @@ Attributes are passed as `locals`, aliased to `@`. You can pass an extra attribu
 # compile it
 nephrite = require 'nephrite'
 
-src = nephrite 'a(b="#{@c}")', 'index.jade'
+src = nephrite 'a(b="#{@c}")', 'index.jade', options
 js = Coco.compile src, {bare: true, filename}
 
 # use it
 fn obj, extra
 ```
+
+The options object is passed to jade, without :
+
+  - the `safe` option, for `@` and `@@` replacement (see below).
+
 
 ## Syntax
 
@@ -104,3 +109,19 @@ ul#pages
 blah= gen-classes {}
 ```
   Remember, of course, that you should avoid having too much logic in your templates
+
+  - Do note one thing : replacement of `@` is `@@` is made globally, even in your text.
+    For example, `div @hey` will give `<div>locals.hey</div>`.
+
+    In order to avoid that, you can enable the "safe mode" through two ways :
+
+      - Passing the option `{+safe}` to the compiling (3rd parameter).
+
+      - Using the directive in prelude :
+      ```jade
+        ~ "use safe"
+        div @hey
+        div= @this-is-interpolated
+      ```
+
+      Be warned that this comes with a performance loss (the function is wrapped with an IIFE for the transpiler to recognize `@` as `this`), which is why it's not active by default.
