@@ -39,8 +39,9 @@ Nephrite's default extension is `.ne` - `.jade` being valid too.
 
 ## Usage
 
-Compile it and use it later.
-Attributes are passed as `locals`, aliased to `@`. You can pass an extra attributes object as `@@`
+Compile it and use it client-side (this acts like jade's `client: true`).
+Attributes are passed as `locals`, aliased to `@`. You can pass an extra attributes object as `@@`.
+The code returned is a module export (`module.exports = -> ...`).
 
 ```coffee
 # compile it
@@ -49,7 +50,7 @@ nephrite = require 'nephrite'
 src = nephrite 'a(b="#{@c}")', 'index.jade', options
 js = Coco.compile src, {bare: true, filename}
 
-# use it
+# use it client-side
 fn obj, extra
 ```
 

@@ -10,7 +10,7 @@ module.exports = class Compiler
   # tags that must be joined
   joinable-tags = <[while for]>
 
-  (@src, @filename, @jade-opts) ~>
+  (@src, @filename, @jade-opts = {}) ~>
     @ind-len = 0
     @base-ind = ""
     
