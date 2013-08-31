@@ -1,6 +1,6 @@
 TS=coco
 
-install: index.js
+build: index.js
 
 index.js:
 	@echo Building .js file ...

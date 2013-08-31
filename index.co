@@ -92,6 +92,7 @@ module.exports = class Compiler
 
 
     @prelude *= '\n'
+    @prelude .= replace /{{/g '#{'
     # safe directive (... :( this is sad.)
     unless @safe # if not given as an option
       @safe = !!~@prelude.indexOf '"use safe"'
