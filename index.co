@@ -39,7 +39,7 @@ module.exports = class Compiler
         ; # jade interpolation
       
       trimmed.slice(0 2) is \#{
-        # tag interpolation => #{tag} becomes should be #{"tag"}
+        # tag interpolation (#{tag})
         line .= replace \#{ '%{"__INTER__'
         line .= replace \} '__OUTER__"}'
       
@@ -108,20 +108,26 @@ module.exports = class Compiler
     it -= /\r/g # fuck
     src = []
     
-    # keep tracks on indent needed for tags
-    # so that we can 
+    # keep track on indent needed for tags
+    # so that we can
     indent-levels = []
 
-    # keep tracks of real indent to insert
+    # keep track of real indent to insert
     # (same as indent-levels minus extra-level)
     real-indents = []
+    
+    real-indent = ~>
+      @entab real-indents.pop!
 
     var prev-indent, filter-indent
-    start = true
+    start = true # meh
 
     # let's process it ...
     for line of (it + "\n") / '\n'
       if not filter-indent and (line.trim!0 is '-' or src[*-1]?[*-1] is ',')
+        # not in a filter
+        # but in a code interp or after a line with attributes
+        # NOTE: `src[*-1]?[*-1] is ','` is dumb
         # attributes continuation
         src.push @interp line, extra-level
         continue
@@ -132,13 +138,12 @@ module.exports = class Compiler
         @base-ind = that.0 unless @base-ind
         @ind-len = that.0.length unless @ind-len
 
-        that.0.length / @ind-len # 2 spaces indent
+        that.0.length / @ind-len
       else 0
 
       # avoid escaping filters
       if filter-indent
-        if indent < filter-indent
-          # GET. OUT.
+        if indent < filter-indent # GET. OUT.
           filter-indent = 0
         else # we're still in the filter
           src.push line
@@ -151,7 +156,7 @@ module.exports = class Compiler
       while indent <= indent-levels[*-1]
         indent-levels.pop!
         #        INDENT            close the """ and nullcheck
-        src.push @entab(real-indents.pop!) + '| """) or ""}'
+        src.push real-indent! + '| """) or ""}'
         --extra-level # decrease debt
 
       tabs = @entab indent - extra-level
