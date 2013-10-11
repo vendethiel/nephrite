@@ -26,10 +26,12 @@ will get compiled to
 }()) || '') + '</ul>'
 ```
 
+**IMPORTANT NOTE** : nephrite does **NOT** do interpolation. This is because its main use-case (FULL SPEED) (also the fact that it was hard hard to do considering the code). Use at your own risk ;).
+
 Jade itself can be slow due to several factors (`with`, `attrs`, `escape`) and this project allows you to avoid that!
 
 (the code is highly unstable and total crap)
-Tho, it's used in [html5chan](http://github.com/qqueue/html5chan) and [wowboardhelpers](http://github.com/Nami-Doc/wowboardhelpers).
+Tho, it's used in [c4](http://github.com/qqueue/c4) and [wowboardhelpers](http://github.com/Nami-Doc/wowboardhelpers).
 
 
 ## Extension
