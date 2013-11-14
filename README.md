@@ -26,7 +26,7 @@ will get compiled to
 }()) || '') + '</ul>'
 ```
 
-**IMPORTANT NOTE** : nephrite does **NOT** do interpolation. This is because its main use-case (FULL SPEED) (also the fact that it was hard hard to do considering the code). Use at your own risk ;).
+**IMPORTANT NOTE** : nephrite does **NOT** do escaping. This is because its main use-case (FULL SPEED) (also the fact that it was hard hard to do considering the code). Use at your own risk ;).
 
 Jade itself can be slow due to several factors (`with`, `attrs`, `escape`) and this project allows you to avoid that!
 
