@@ -66,17 +66,17 @@ for cases
 		result = fn args, extra .trim!
 	catch
 		console.log """
-Error : #e
-#src
-"""
+			Error : #e
+			#src
+		"""
 
 	if result is html
 		console.log "OK: #&."
 	else
 		err """
-**FAIL** : #&.
-Got      : #result
-Expected : #html
-"""
+			**FAIL** : #&.
+			Got      : #result
+			Expected : #html
+		"""
 
 console.log 'Tests passed!'
