@@ -94,8 +94,7 @@ module.exports = class Compiler
     @prelude *= '\n'
     @prelude .= replace /{{/g '#{'
     # safe directive (... :( this is sad.)
-    unless @safe # if not given as an option
-      @safe = !!~@prelude.indexOf '"use safe"'
+    @safe ||= !!~@prelude.indexOf '"use safe"' # directive overrides option
     unless @safe
       fn .= replace /@@/g \extra.
       fn .= replace /@/g \locals.
@@ -145,7 +144,7 @@ module.exports = class Compiler
       if filter-indent
         if indent < filter-indent # GET. OUT.
           filter-indent = 0
-        else # we're still in the filter
+        else # we're still in the filter, no more processing
           src.push line
           continue
 
@@ -162,7 +161,7 @@ module.exports = class Compiler
       tabs = @entab indent - extra-level
       
       if start
-        start = false unless tag is '~'
+        start := false unless tag is '~'
       if
         trimmed.0 is ':'
           # filter, stop escaping shit
