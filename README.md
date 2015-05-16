@@ -1,4 +1,4 @@
- [![Build Status](https://secure.travis-ci.org/Nami-Doc/nephrite.png)](http://travis-ci.org/Nami-Doc/nephrite)
+ [![Build Status](https://secure.travis-ci.org/vendethiel/nephrite.png)](http://travis-ci.org/vendethiel/nephrite)
 
 Nephrite
 ==============
@@ -31,7 +31,7 @@ will get compiled to
 Jade itself can be slow due to several factors (`with`, `attrs`, `escape`) and this project allows you to avoid that!
 
 (the code is highly unstable and total crap)
-Tho, it's used in [c4](http://github.com/qqueue/c4) and [wowboardhelpers](http://github.com/Nami-Doc/wowboardhelpers).
+Tho, it's used in [c4](http://github.com/qqueue/c4) and [wowboardhelpers](http://github.com/vendethiel/wowboardhelpers).
 
 
 ## Extension
