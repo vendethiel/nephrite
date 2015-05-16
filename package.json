@@ -1,7 +1,7 @@
 {
 	"name": "nephrite",
 	"version": "2.3.2",
-	"author": "Nami-Doc",
+	"author": "vendethiel",
 	"main": "index.js",
 	"scripts": {
 		"prepublish": "make",
